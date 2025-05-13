@@ -1,0 +1,91 @@
+-- ===========================================================
+-- Library Management System Database - MySQL Implementation
+-- ===========================================================
+
+-- ============================================
+-- Creating Tables
+-- ============================================
+
+-- Table 1: Authors - Stores information about authors
+CREATE TABLE Authors (
+    AuthorID INT AUTO_INCREMENT PRIMARY KEY,  -- Primary Key
+    FirstName VARCHAR(100) NOT NULL,          -- Not Null constraint
+    LastName VARCHAR(100) NOT NULL,           -- Not Null constraint
+    DateOfBirth DATE,                         -- Date of birth
+    UNIQUE (FirstName, LastName)              -- Unique constraint for name
+);
+
+-- Table 2: Books - Stores information about books
+CREATE TABLE Books (
+    BookID INT AUTO_INCREMENT PRIMARY KEY,  -- Primary Key
+    Title VARCHAR(255) NOT NULL,             -- Not Null constraint
+    Genre VARCHAR(100),                      -- Genre of the book
+    PublishDate DATE,                        -- Date the book was published
+    AuthorID INT,                            -- Foreign Key reference to Authors table
+    CONSTRAINT FK_Author FOREIGN KEY (AuthorID) REFERENCES Authors(AuthorID) 
+    ON DELETE CASCADE                        -- On deletion, delete the books by the author
+);
+
+-- Table 3: Members - Stores information about library members
+CREATE TABLE Members (
+    MemberID INT AUTO_INCREMENT PRIMARY KEY,  -- Primary Key
+    FirstName VARCHAR(100) NOT NULL,          -- Not Null constraint
+    LastName VARCHAR(100) NOT NULL,           -- Not Null constraint
+    Email VARCHAR(150) NOT NULL,              -- Not Null constraint
+    UNIQUE (Email)                            -- Unique constraint on email
+);
+
+-- Table 4: BookLoans - Tracks the borrowing of books
+CREATE TABLE BookLoans (
+    LoanID INT AUTO_INCREMENT PRIMARY KEY,  -- Primary Key
+    BookID INT,                              -- Foreign Key reference to Books table
+    MemberID INT,                            -- Foreign Key reference to Members table
+    LoanDate DATE NOT NULL,                  -- Date when the book is borrowed
+    ReturnDate DATE,                         -- Date when the book is returned
+    CONSTRAINT FK_Book FOREIGN KEY (BookID) REFERENCES Books(BookID) 
+    ON DELETE CASCADE,                       -- On deletion, delete the loans for the book
+    CONSTRAINT FK_Member FOREIGN KEY (MemberID) REFERENCES Members(MemberID)
+    ON DELETE CASCADE                        -- On deletion, delete the loans for the member
+);
+
+-- ============================================
+-- Relationships
+-- ============================================
+
+-- 1. One-to-Many Relationship between Authors and Books:
+-- An author can write many books, but a book has only one author.
+-- This is captured by the AuthorID foreign key in the Books table.
+
+-- 2. Many-to-Many Relationship between Books and Members:
+-- A book can be borrowed by many members over time, and a member can borrow many books.
+-- This relationship is captured by the BookLoans table, which holds records of which books are borrowed by which members.
+
+-- ============================================
+-- Sample Data Insertion
+-- ============================================
+
+-- Insert Authors
+INSERT INTO Authors (FirstName, LastName, DateOfBirth) VALUES
+('George', 'Orwell', '1903-06-25'),
+('J.K.', 'Rowling', '1965-07-31'),
+('J.R.R.', 'Tolkien', '1892-01-03');
+
+-- Insert Books
+INSERT INTO Books (Title, Genre, PublishDate, AuthorID) VALUES
+('1984', 'Dystopian', '1949-06-08', 1),
+('Harry Potter and the Sorcerer\'s Stone', 'Fantasy', '1997-06-26', 2),
+('The Hobbit', 'Fantasy', '1937-09-21', 3);
+
+-- Insert Members
+INSERT INTO Members (FirstName, LastName, Email) VALUES
+('John', 'Doe', 'johndoe@example.com'),
+('Jane', 'Smith', 'janesmith@example.com');
+
+-- Insert BookLoans
+INSERT INTO BookLoans (BookID, MemberID, LoanDate, ReturnDate) VALUES
+(1, 1, '2025-05-01', '2025-06-01'),
+(2, 2, '2025-04-15', '2025-05-15');
+
+-- ============================================
+-- End of Script
+-- ============================================
