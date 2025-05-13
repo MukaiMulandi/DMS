@@ -1,7 +1,7 @@
 Library Management System
 
 
-Description
+Description:
 This project implements a Library Management System using MySQL. It allows managing authors, books, library members, and book loans. The system supports relationships such as one-to-many between authors and books, and many-to-many between books and members.
 
 Features:
